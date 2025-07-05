@@ -1,11 +1,18 @@
+from httpcore import __name
 from tavily import TavilyClient
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-client = TavilyClient(os.getenv("TAVILY_API_KEY"))
-response = client.search(
-    query="What are the best practices for implementing RAG in production?",
-    max_results=10
-)
+def getSearchUrls(query, maxResult=5):
+    client = TavilyClient(os.getenv("TAVILY_API_KEY"))
+    response = client.search(
+        query=query,
+        max_results=maxResult
+    )
+    return [item["url"] for item in response.get("results", [])]
+
+if __name__ == "__main__":
+    query = "What are the best ways to refactor in python"
+    urls = getSearchUrls(query, 5)
