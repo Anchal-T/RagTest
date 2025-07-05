@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 import os
 
@@ -10,10 +10,11 @@ raw_content = [
     "Another document about refactoring in Python."
 ]
 
-embaddings = OpenAIEmbeddings()
+embaddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
 vectorDb = Chroma.from_texts(raw_content, embaddings, persist_directory='./chromaDb')
 
-query = "What is stripe payment"
+query = "What is gay"
 results = vectorDb.similarity_search(query, k=2)
 for doc in results:
     print(doc.page_content)
