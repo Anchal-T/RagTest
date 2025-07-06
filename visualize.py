@@ -14,12 +14,15 @@ docs = results['documents']
 pca = PCA(n_components=3)
 vis_dims = pca.fit_transform(embeddings)
 
+# Use short snippets for labels
+short_docs = [' '.join(doc.split()[:8]) + "..." for doc in docs]
+
 # Create an interactive 3D plot with text labels
 fig = px.scatter_3d(
     x=vis_dims[:, 0],
     y=vis_dims[:, 1],
     z=vis_dims[:, 2],
-    text=docs,  # Show the actual text
+    text=short_docs,  # Much faster!
     labels={'x': 'PCA Component 1', 'y': 'PCA Component 2', 'z': 'PCA Component 3'},
     title='3D PCA of Embeddings'
 )

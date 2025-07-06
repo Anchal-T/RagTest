@@ -21,7 +21,7 @@ def get_cached_raw_content(query, urlNums, cacheDir="cache"):
 def buildVecDb(query, urlNums=5):
     raw_content = get_cached_raw_content(query, urlNums)
 
-    textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    textSplitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=500)
 
     allChunks = []
     for doc in raw_content:
