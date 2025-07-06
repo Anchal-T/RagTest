@@ -9,5 +9,5 @@ def query_vector_db(query, k=1):
         print(doc.page_content)
 
 if __name__ == "__main__":
-    query = "at what temperature to bake a cake"
+    query = "How to refactor"
     query_vector_db(query, k=1)

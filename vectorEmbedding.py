@@ -8,24 +8,18 @@ from dotenv import load_dotenv
 import os
 import json
 
-from urlCrawl import extractFromUrl
-from searchResult import getSearchUrls
 load_dotenv()
 
-def getCachedResult(query, urlNums, cacheDir="cache"):
+def get_cached_raw_content(query, urlNums, cacheDir="cache"):
     os.makedirs(cacheDir, exist_ok=True)
-    cacheFile = os.path.join(cacheDir, f"{query.replace(" ", "_")}_{urlNums}.json")
+    cacheFile = os.path.join(cacheDir, f"{query.replace(' ', '_')}_{urlNums}_raw.json")
     if os.path.exists(cacheFile):
         with open(cacheFile, "r", encoding="utf-8") as f:
             return json.load(f)
-    urls = getSearchUrls(query, urlNums)
-    with open(cacheFile, "w", encoding="utf-8") as f:
-        json.dump(urls, f)
-    return urls
+    raise FileNotFoundError(f"Cached raw content not found for query '{query}' with {urlNums} urls.")
 
 def buildVecDb(query, urlNums=5):
-    urls = getCachedResult(query, urlNums)
-    raw_content = extractFromUrl(urls)
+    raw_content = get_cached_raw_content(query, urlNums)
 
     textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
@@ -38,5 +32,5 @@ def buildVecDb(query, urlNums=5):
     print('Vector Db built')
 
 if __name__ == "__main__":
-    query = "How to bake a cake"
-    buildVecDb(query, 5)
+    query = "What are the best ways to refactor in python"
+    buildVecDb(query, 1)
