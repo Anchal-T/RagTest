@@ -6,16 +6,28 @@ from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 import os
+import json
 
 from urlCrawl import extractFromUrl
 from searchResult import getSearchUrls
 load_dotenv()
 
-def buildVecDb(query, urlNums=5):
+def getCachedResult(query, urlNums, cacheDir="cache"):
+    os.makedirs(cacheDir, exist_ok=True)
+    cacheFile = os.path.join(cacheDir, f"{query.replace(" ", "_")}_{urlNums}.json")
+    if os.path.exists(cacheFile):
+        with open(cacheFile, "r", encoding="utf-8") as f:
+            return json.load(f)
     urls = getSearchUrls(query, urlNums)
+    with open(cacheFile, "w", encoding="utf-8") as f:
+        json.dump(urls, f)
+    return urls
+
+def buildVecDb(query, urlNums=5):
+    urls = getCachedResult(query, urlNums)
     raw_content = extractFromUrl(urls)
 
-    textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=50)
+    textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
     allChunks = []
     for doc in raw_content:
